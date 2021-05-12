@@ -62,6 +62,9 @@ for i in $(<$TMPFILE); do
 
 done
 
+# cleanup
+rm -fr $TMPFILE > /dev/null 2>&1
+
 # its all over
 exit 0
 
