@@ -13,7 +13,7 @@ function exit_on_error {
    local STATUS=$1
    local MESSAGE=$2
    if [ $STATUS -ne 0 ]; then
-      error_and_exit "$MESSAGE"
+      error_and_exit "ERROR: $MESSAGE"
    fi
 }
 
