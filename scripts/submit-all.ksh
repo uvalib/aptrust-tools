@@ -54,8 +54,8 @@ aws_bucket=$(extract_nv_from_file $CONFIG_FILE aws_bucket)
 
 # local definitions
 TMPFILE=/tmp/submit-all.$$
-AWS_ACCESS_KEY_ID=${aws_key}
-AWS_SECRET_ACCESS_KEY=${aws_secret}
+export AWS_ACCESS_KEY_ID=${aws_key}
+export AWS_SECRET_ACCESS_KEY=${aws_secret}
 
 # track our progress
 SUCCESS_COUNT=0
