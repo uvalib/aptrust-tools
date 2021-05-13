@@ -10,7 +10,7 @@ SCRIPT_DIR=$( (cd -P $(dirname $0) && pwd) )
 . $SCRIPT_DIR/common.ksh
 
 function show_use_and_exit {
-   error_and_exit "use: $(basename $0) <input directory> <bucket name>"
+   error_and_exit "use: $(basename $0) <input directory> <environment>"
 }
 
 # ensure correct usage
@@ -21,8 +21,24 @@ fi
 # input parameters for clarity
 INPUT_DIR=$1
 shift
-BUCKET_NAME=$1
+ENVIRONMENT=$1
 shift
+
+# validate the environment parameter
+case $ENVIRONMENT in
+   test)
+   CONFIG_FILE=$SCRIPT_DIR/../tmp/config/ap-trust-test.config
+   ;;
+   production)
+   CONFIG_FILE=$SCRIPT_DIR/../tmp/config/ap-trust-production.config
+   ;;
+   *) echo "ERROR: specify test or production, aborting"
+   exit 1
+   ;;
+esac
+
+# check the config file exists
+ensure_file_exists $CONFIG_FILE
 
 # submitter tool
 SUBMITTER=$SCRIPT_DIR/submit-bag.ksh
@@ -31,8 +47,15 @@ ensure_file_exists $SUBMITTER
 # check the input directory exists
 ensure_dir_exists $INPUT_DIR
 
+# get the needed configuration
+aws_key=$(extract_nv_from_file $CONFIG_FILE aws_key)
+aws_secret=$(extract_nv_from_file $CONFIG_FILE aws_secret)
+aws_bucket=$(extract_nv_from_file $CONFIG_FILE aws_bucket)
+
 # local definitions
 TMPFILE=/tmp/submit-all.$$
+AWS_ACCESS_KEY_ID=${aws_key}
+AWS_SECRET_ACCESS_KEY=${aws_secret}
 
 # track our progress
 SUCCESS_COUNT=0
@@ -47,7 +70,7 @@ for i in $(<$TMPFILE); do
    echo -n "submitting $BASE_NAME... "
 
    # submit the file
-   $SUBMITTER ${INPUT_DIR}/${BASE_NAME} $BUCKET_NAME
+   $SUBMITTER ${INPUT_DIR}/${BASE_NAME} ${aws_bucket}
    if [ $? -eq 0 ]; then
       echo "OK"
       ((SUCCESS_COUNT=SUCCESS_COUNT+1))
