@@ -29,6 +29,8 @@ GROUP_ID=$1
 shift
 
 # ensure we have the tools available
+JQ_TOOL=jq
+ensure_tool_available $JQ_TOOL
 TAR_TOOL=tar
 ensure_tool_available $TAR_TOOL
 PYTHON_TOOL=python3
@@ -53,10 +55,21 @@ exit_on_error $? "cannot create the working directory $BAG_NAME"
 cp -R $INPUT_DIR/* $BAG_NAME
 exit_on_error $? "copying source files"
 
-# run the bagging tool
 $PYTHON_TOOL -m bagit $BAGIT_OPTS $BAG_NAME
 exit_on_error $? "during bagging"
 
+# create the aptrust-info.txt file
+INFO_FILE=${BAG_NAME}/aptrust-info.txt
+WORK_FILE=${BAG_NAME}/data/work.json
+ensure_file_exists $WORK_FILE
+TITLE=$($JQ_TOOL ".title[0]" $WORK_FILE)
+DESCRIPTION=$($JQ_TOOL ".description" $WORK_FILE)
+echo "Title: ${TITLE}" >> $INFO_FILE
+echo "Description: ${DESCRIPTION}" >> $INFO_FILE
+echo "Access: Consortia" >> $INFO_FILE
+echo "Storage: Standard" >> $INFO_FILE
+
+# run the bagging tool
 # bundle up the bagged directory
 $TAR_TOOL cvf ${BAG_NAME}.tar $BAG_NAME > /dev/null 2>&1
 exit_on_error $? "during tar"
