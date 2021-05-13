@@ -34,20 +34,36 @@ ensure_dir_exists $INPUT_DIR
 # local definitions
 TMPFILE=/tmp/submit-all.$$
 
+# track our progress
+SUCCESS_COUNT=0
+ERROR_COUNT=0
+
 # find all the files of a specified pattern
 find $INPUT_DIR -type f -name \*.tar | grep ".tar" > $TMPFILE
 
 # for all the directories we located
 for i in $(<$TMPFILE); do
    BASE_NAME=$(basename $i)
-   echo "submitting $BASE_NAME..."
+   echo -n "submitting $BASE_NAME... "
 
+   # submit the file
    $SUBMITTER ${INPUT_DIR}/${BASE_NAME} $BUCKET_NAME
-   exit_on_error $? "while submitting $BASE_NAME"
+   if [ $? -eq 0 ]; then
+      echo "OK"
+      ((SUCCESS_COUNT=SUCCESS_COUNT+1))
+   else
+      # we get an error message from the submit helper
+      echo ""
+      ((ERROR_COUNT=ERROR_COUNT+1))
+   fi
+
 done
 
 # cleanup
 rm -fr $TMPFILE > /dev/null 2>&1
+
+# status message
+echo "done... ${SUCCESS_COUNT} successful, ${ERROR_COUNT} error(s)"
 
 # its all over
 exit 0

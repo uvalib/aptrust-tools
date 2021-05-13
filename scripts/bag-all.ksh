@@ -49,21 +49,36 @@ TMPFILE=/tmp/bag-all.$$
 # find all the files of a specified pattern
 find $INPUT_DIR -type d -name export-\* | grep "export-" > $TMPFILE
 
+# track our progress
+SUCCESS_COUNT=0
+ERROR_COUNT=0
+
 # for all the directories we located
 for i in $(<$TMPFILE); do
    BAG_DIR=$(basename $i)
 
    ID=${BAG_DIR#export-}
-   echo "bagging $BAG_DIR..."
+   echo -n "bagging $BAG_DIR... "
 
+   # do the bagging
    BAG_NAME=${BAG_TYPE}-${ID}
    $BAGGER $INPUT_DIR/$BAG_DIR $OUTPUT_DIR/$BAG_NAME $ID $BAG_TYPE
-   exit_on_error $? "while bagging $BAG_DIR"
+   if [ $? -eq 0 ]; then
+      echo "OK"
+      ((SUCCESS_COUNT=SUCCESS_COUNT+1))
+   else
+      # we get an error message from the bagging helper
+      echo ""
+      ((ERROR_COUNT=ERROR_COUNT+1))
+   fi
 
 done
 
 # cleanup
 rm -fr $TMPFILE > /dev/null 2>&1
+
+# status message
+echo "done... ${SUCCESS_COUNT} successful, ${ERROR_COUNT} error(s)"
 
 # its all over
 exit 0

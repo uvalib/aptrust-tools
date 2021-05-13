@@ -61,6 +61,28 @@ function ensure_var_defined {
    fi
 }
 
+# extract the value of an nv pair specified in a file
+function extract_nv_from_file {
+   local FILE=$1
+   local NAME=$2
+
+   # ensure the input file exists
+   ensure_file_exists $FILE
+
+   # extract the content and fail as appropriate
+   local CONTENT=$(grep "$NAME=" $FILE | head -1)
+   if [ -z "$CONTENT" ]; then
+      error_and_exit "$NAME does not exist in $FILE"
+   fi
+
+   # extract the value and fail as appropriate
+   VALUE=$(echo $CONTENT | awk -F= '{print $2}')
+   if [ -z "$VALUE" ]; then
+      error_and_exit "cannot extract $NAME from $FILE"
+   fi
+   echo $VALUE
+}
+
 #
 # end of fle
 #
