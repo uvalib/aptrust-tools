@@ -62,10 +62,16 @@ for i in $(<$TMPFILE); do
 
    # do the bagging
    BAG_NAME=${BAG_TYPE}-${ID}
-   $BAGGER $INPUT_DIR/$BAG_DIR $OUTPUT_DIR/$BAG_NAME $ID $BAG_TYPE
+   $BAGGER $INPUT_DIR/$BAG_DIR $BAG_NAME $ID $BAG_TYPE
    if [ $? -eq 0 ]; then
-      echo "OK"
-      ((SUCCESS_COUNT=SUCCESS_COUNT+1))
+      mv ${BAG_NAME}.tar $OUTPUT_DIR
+      if [ $? -eq 0 ]; then
+         echo "OK"
+         ((SUCCESS_COUNT=SUCCESS_COUNT+1))
+      else
+         echo "ERROR: moving bag file"
+         ((ERROR_COUNT=ERROR_COUNT+1))
+      fi
    else
       # we get an error message from the bagging helper
       echo ""
