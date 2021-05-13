@@ -74,7 +74,7 @@ COUNT=$($JQ_TOOL ".count" $TMPFILE)
 if [ "$COUNT" == "0" ]; then
    STATUS="unknown"
 else
-   STATUS=$($JQ_TOOL ".results[0].status" $TMPFILE)
+   STATUS=$($JQ_TOOL ".results[0].status" $TMPFILE | tr -d "\"")
 fi
 
 # output the status
