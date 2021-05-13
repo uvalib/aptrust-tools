@@ -70,11 +70,11 @@ $CURL_TOOL $CURL_DEFAULTS -H "Accept: application/json" -H "X-Pharos-API-User: $
 exit_on_error $? "querying $API"
 
 # see if we have any results
-COUNT=$(cat $TMPFILE | $JQ_TOOL ".count")
+COUNT=$($JQ_TOOL ".count" $TMPFILE)
 if [ "$COUNT" == "0" ]; then
    STATUS="unknown"
 else
-   STATUS=$(cat $TMPFILE | $JQ_TOOL ".results[0].status")
+   STATUS=$($JQ_TOOL ".results[0].status" $TMPFILE)
 fi
 
 # output the status
