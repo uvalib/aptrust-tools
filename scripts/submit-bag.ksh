@@ -33,6 +33,14 @@ ensure_tool_available $AWS_TOOL
 JQ_TOOL=jq
 ensure_tool_available $JQ_TOOL
 
+# verify our expected environment exists and set the environment needed by the aws cli
+ensure_var_defined "$aws_key" "aws_key"
+ensure_var_defined "$aws_secret" "aws_secret"
+ensure_var_defined "$aws_region" "aws_region"
+export AWS_ACCESS_KEY_ID=${aws_key}
+export AWS_SECRET_ACCESS_KEY=${aws_secret}
+export AWS_DEFAULT_REGION=${aws_region}
+
 # upload the file
 BASE_NAME=$(basename $BAG_FILE)
 $AWS_TOOL s3 cp ${BAG_FILE} s3://${BUCKET_NAME}/${BASE_NAME} --quiet

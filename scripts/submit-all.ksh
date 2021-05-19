@@ -32,12 +32,11 @@ ensure_dir_exists $INPUT_DIR
 # ensure we have the environment we need
 ensure_var_defined "$aws_key" "aws_key"
 ensure_var_defined "$aws_secret" "aws_secret"
+ensure_var_defined "$aws_region" "aws_region"
 ensure_var_defined "$aws_bucket" "aws_bucket"
 
 # local definitions
 TMPFILE=/tmp/submit-all.$$
-export AWS_ACCESS_KEY_ID=${aws_key}
-export AWS_SECRET_ACCESS_KEY=${aws_secret}
 
 # track our progress
 SUCCESS_COUNT=0
