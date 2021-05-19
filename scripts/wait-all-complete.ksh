@@ -10,28 +10,17 @@ SCRIPT_DIR=$( (cd -P $(dirname $0) && pwd) )
 . $SCRIPT_DIR/common.ksh
 
 function show_use_and_exit {
-   error_and_exit "use: $(basename $0) <input directory> <environment>"
+   error_and_exit "use: $(basename $0) <input directory>"
 }
 
 # ensure correct usage
-if [ $# -lt 2 ]; then
+if [ $# -lt 1 ]; then
    show_use_and_exit
 fi
 
 # input parameters for clarity
 INPUT_DIR=$1
 shift
-ENVIRONMENT=$1
-shift
-
-# validate the environment parameter
-case $ENVIRONMENT in
-   test|production)
-   ;;
-   *) echo "ERROR: specify test or production, aborting"
-   exit 1
-   ;;
-esac
 
 # wait tool
 WAIT_TOOL=$SCRIPT_DIR/wait-bag-complete.ksh
@@ -53,10 +42,9 @@ find $INPUT_DIR -type f -name \*.tar | grep ".tar" > $TMPFILE
 # for all the directories we located
 for i in $(<$TMPFILE); do
    BASE_NAME=$(basename $i)
-   #echo -n "status $BASE_NAME... "
 
    # wait for complete
-   $WAIT_TOOL ${INPUT_DIR}/${BASE_NAME} $ENVIRONMENT
+   $WAIT_TOOL ${INPUT_DIR}/${BASE_NAME}
    if [ $? -eq 0 ]; then
       ((SUCCESS_COUNT=SUCCESS_COUNT+1))
    else

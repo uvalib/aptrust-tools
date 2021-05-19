@@ -10,28 +10,17 @@ SCRIPT_DIR=$( (cd -P $(dirname $0) && pwd) )
 . $SCRIPT_DIR/common.ksh
 
 function show_use_and_exit {
-   error_and_exit "use: $(basename $0) <input directory> <environment>"
+   error_and_exit "use: $(basename $0) <input directory>"
 }
 
 # ensure correct usage
-if [ $# -lt 2 ]; then
+if [ $# -lt 1 ]; then
    show_use_and_exit
 fi
 
 # input parameters for clarity
 INPUT_DIR=$1
 shift
-ENVIRONMENT=$1
-shift
-
-# validate the environment parameter
-case $ENVIRONMENT in
-   test|production)
-   ;;
-   *) echo "ERROR: specify test or production, aborting"
-   exit 1
-   ;;
-esac
 
 # status tool
 STATUS_TOOL=$SCRIPT_DIR/status-bag.ksh
@@ -39,6 +28,11 @@ ensure_file_exists $STATUS_TOOL
 
 # check the input directory exists
 ensure_dir_exists $INPUT_DIR
+
+# ensure we have the environment config we need
+ensure_var_defined "$aptrust_api_url" "aptrust_api_url"
+ensure_var_defined "$aptrust_user" "aptrust_user"
+ensure_var_defined "$aptrust_key" "aptrust_key"
 
 # local definitions
 TMPFILE=/tmp/status-all.$$
@@ -56,7 +50,7 @@ for i in $(<$TMPFILE); do
    echo -n "status $BASE_NAME... "
 
    # get the status
-   $STATUS_TOOL ${INPUT_DIR}/${BASE_NAME} $ENVIRONMENT
+   $STATUS_TOOL ${INPUT_DIR}/${BASE_NAME}
    if [ $? -eq 0 ]; then
       ((SUCCESS_COUNT=SUCCESS_COUNT+1))
    else

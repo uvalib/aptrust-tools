@@ -10,35 +10,17 @@ SCRIPT_DIR=$( (cd -P $(dirname $0) && pwd) )
 . $SCRIPT_DIR/common.ksh
 
 function show_use_and_exit {
-   error_and_exit "use: $(basename $0) <input directory> <environment>"
+   error_and_exit "use: $(basename $0) <input directory>"
 }
 
 # ensure correct usage
-if [ $# -lt 2 ]; then
+if [ $# -lt 1 ]; then
    show_use_and_exit
 fi
 
 # input parameters for clarity
 INPUT_DIR=$1
 shift
-ENVIRONMENT=$1
-shift
-
-# validate the environment parameter
-case $ENVIRONMENT in
-   test)
-   CONFIG_FILE=$SCRIPT_DIR/../tmp/config/ap-trust-test.config
-   ;;
-   production)
-   CONFIG_FILE=$SCRIPT_DIR/../tmp/config/ap-trust-production.config
-   ;;
-   *) echo "ERROR: specify test or production, aborting"
-   exit 1
-   ;;
-esac
-
-# check the config file exists
-ensure_file_exists $CONFIG_FILE
 
 # submitter tool
 SUBMITTER=$SCRIPT_DIR/submit-bag.ksh
@@ -47,10 +29,10 @@ ensure_file_exists $SUBMITTER
 # check the input directory exists
 ensure_dir_exists $INPUT_DIR
 
-# get the needed configuration
-aws_key=$(extract_nv_from_file $CONFIG_FILE aws_key)
-aws_secret=$(extract_nv_from_file $CONFIG_FILE aws_secret)
-aws_bucket=$(extract_nv_from_file $CONFIG_FILE aws_bucket)
+# ensure we have the environment we need
+ensure_var_defined "$aws_key" "aws_key"
+ensure_var_defined "$aws_secret" "aws_secret"
+ensure_var_defined "$aws_bucket" "aws_bucket"
 
 # local definitions
 TMPFILE=/tmp/submit-all.$$

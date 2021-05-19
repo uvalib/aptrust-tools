@@ -10,32 +10,17 @@ SCRIPT_DIR=$( (cd -P $(dirname $0) && pwd) )
 . $SCRIPT_DIR/common.ksh
 
 function show_use_and_exit {
-   error_and_exit "use: $(basename $0) <bag file> <environment>"
+   error_and_exit "use: $(basename $0) <bag file>"
 }
 
 # ensure correct usage
-if [ $# -lt 2 ]; then
+if [ $# -lt 1 ]; then
    show_use_and_exit
 fi
 
 # input parameters for clarity
 BAG_FILE=$1
 shift
-ENVIRONMENT=$1
-shift
-
-# validate the environment parameter
-case $ENVIRONMENT in
-   test)
-   CONFIG_FILE=$SCRIPT_DIR/../tmp/config/ap-trust-test.config
-   ;;
-   production)
-   CONFIG_FILE=$SCRIPT_DIR/../tmp/config/ap-trust-production.config
-   ;;
-   *) echo "ERROR: specify test or production, aborting"
-   exit 1
-   ;;
-esac
 
 # ensure we have the tools available
 CURL_TOOL=curl
@@ -43,13 +28,10 @@ ensure_tool_available $CURL_TOOL
 JQ_TOOL=jq
 ensure_tool_available $JQ_TOOL
 
-# check the config file exists
-ensure_file_exists $CONFIG_FILE
-
-# get the needed configuration
-aptrust_api_url=$(extract_nv_from_file $CONFIG_FILE aptrust_api_url)
-aptrust_user=$(extract_nv_from_file $CONFIG_FILE aptrust_user)
-aptrust_key=$(extract_nv_from_file $CONFIG_FILE aptrust_key)
+# ensure we have the environment config we need
+ensure_var_defined "$aptrust_api_url" "aptrust_api_url"
+ensure_var_defined "$aptrust_user" "aptrust_user"
+ensure_var_defined "$aptrust_key" "aptrust_key"
 
 # check the bag etag file exists
 ensure_file_exists ${BAG_FILE}.etag

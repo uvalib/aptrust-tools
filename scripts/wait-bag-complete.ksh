@@ -10,28 +10,17 @@ SCRIPT_DIR=$( (cd -P $(dirname $0) && pwd) )
 . $SCRIPT_DIR/common.ksh
 
 function show_use_and_exit {
-   error_and_exit "use: $(basename $0) <bag file> <environment>"
+   error_and_exit "use: $(basename $0) <bag file>"
 }
 
 # ensure correct usage
-if [ $# -lt 2 ]; then
+if [ $# -lt 1 ]; then
    show_use_and_exit
 fi
 
 # input parameters for clarity
 BAG_FILE=$1
 shift
-ENVIRONMENT=$1
-shift
-
-# validate the environment parameter
-case $ENVIRONMENT in
-   test|production)
-   ;;
-   *) echo "ERROR: specify test or production, aborting"
-   exit 1
-   ;;
-esac
 
 # status tool
 STATUS_TOOL=$SCRIPT_DIR/status-bag.ksh
@@ -45,7 +34,7 @@ while true; do
    echo -n "status $BASE_NAME... "
 
    # get the status
-   STATUS=$($STATUS_TOOL ${BAG_FILE} $ENVIRONMENT)
+   STATUS=$($STATUS_TOOL ${BAG_FILE})
    echo $STATUS
 
    # happy day...
