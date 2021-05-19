@@ -50,7 +50,7 @@ while true; do
    if [ "$STATUS" == "Success" -o "$STATUS" == "Failed" ]; then
       break
    else
-      sleep 3
+      sleep 5
    fi
 
 done
