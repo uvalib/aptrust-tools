@@ -47,11 +47,19 @@ while true; do
    # get the status
    STATUS=$($STATUS_TOOL ${BAG_FILE} $ENVIRONMENT)
    echo $STATUS
-   if [ "$STATUS" == "Success" -o "$STATUS" == "Failed" ]; then
-      break
-   else
-      sleep 5
+
+   # happy day...
+   if [ "$STATUS" == "Success" ]; then
+      exit 0
    fi
+
+   # sad panda...
+   if [ "$STATUS" == "Failed" ]; then
+      exit 1
+   fi
+
+   # wait...
+   sleep 5
 
 done
 
