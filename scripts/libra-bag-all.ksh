@@ -36,7 +36,7 @@ case $BAG_TYPE in
 esac
 
 # bagger tool
-BAGGER=$SCRIPT_DIR/bag-dir.ksh
+BAGGER=$SCRIPT_DIR/libra-bag-dir.ksh
 ensure_file_exists $BAGGER
 
 # check the input and output directories exists
@@ -44,7 +44,7 @@ ensure_dir_exists $INPUT_DIR
 ensure_dir_exists $OUTPUT_DIR
 
 # local definitions
-TMPFILE=/tmp/bag-all.$$
+TMPFILE=/tmp/libra-bag-all.$$
 
 # find all the files of a specified pattern
 find $INPUT_DIR -type d -name export-\* | grep "export-" > $TMPFILE
