@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# A helper to create a set of bags from a set of directories
+# A helper to create a set of libra specific bags from a set of directories
 #
 
 #set -x
