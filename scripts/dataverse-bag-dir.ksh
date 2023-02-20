@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# A helper to create a bag from the specified directory
+# A helper to create a bag from the specified DataVerse export directory
 #
 
 #set -x
