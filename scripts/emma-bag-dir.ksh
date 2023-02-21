@@ -63,8 +63,7 @@ INFO_FILE=${BAG_NAME}/aptrust-info.txt
 WORK_FILE=${BAG_NAME}/data/metadata.json
 ensure_file_exists $WORK_FILE
 TITLE=$($JQ_TOOL ".dc_title" $WORK_FILE)
-#DESCRIPTION=$($JQ_TOOL ".description" $WORK_FILE)
-DESCRIPTION=unknown
+DESCRIPTION=$($JQ_TOOL ".dc_description" $WORK_FILE)
 echo "Title: ${TITLE}" >> $INFO_FILE
 echo "Description: ${DESCRIPTION}" >> $INFO_FILE
 echo "Access: Consortia" >> $INFO_FILE
