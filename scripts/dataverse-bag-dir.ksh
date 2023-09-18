@@ -48,7 +48,7 @@ exit_on_error $? "copying source files"
 INFO_FILE=${BAG_NAME}/aptrust-info.txt
 WORK_FILE=${BAG_NAME}/metadata/oai-ore.jsonld
 ensure_file_exists $WORK_FILE
-TITLE=$($JQ_TOOL '."ore:describes".Title' $WORK_FILE)
+TITLE=$($JQ_TOOL '."ore:describes"."citation:dsDescription"."citation:dsDescriptionValue"' $WORK_FILE)
 DESCRIPTION=$($JQ_TOOL '."ore:describes"."citation:Dataset Description"."dsDescription:Text"' $WORK_FILE)
 
 if [ -z "$TITLE" ]; then
