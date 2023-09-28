@@ -4,7 +4,7 @@
 FROM public.ecr.aws/docker/library/alpine:3.18
 
 # update the packages and add what we need
-RUN apk update && apk upgrade && apk add bash tzdata ca-certificates curl jq tar aws-cli py3-pip && rm -fr /var/cache/apk/*
+RUN apk update && apk upgrade && apk add bash tzdata ca-certificates curl jq tar aws-cli py3-pip zip unzip && rm -fr /var/cache/apk/*
 
 # install the bagit package
 RUN pip3 install bagit
