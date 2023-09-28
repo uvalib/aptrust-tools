@@ -37,6 +37,7 @@ ensure_dir_exists $INPUT_DIR
 OUTPUT_FILE=${BAG_NAME}.tar
 
 # create the directory we will be bagging
+rm -fr $BAG_NAME > /dev/null 2>&1
 mkdir $BAG_NAME > /dev/null 2>&1
 exit_on_error $? "cannot create the working directory $BAG_NAME"
 
@@ -48,8 +49,11 @@ exit_on_error $? "copying source files"
 INFO_FILE=${BAG_NAME}/aptrust-info.txt
 WORK_FILE=${BAG_NAME}/metadata/oai-ore.jsonld
 ensure_file_exists $WORK_FILE
-TITLE=$($JQ_TOOL '."ore:describes"."citation:dsDescription"."citation:dsDescriptionValue"' $WORK_FILE)
-DESCRIPTION=$($JQ_TOOL '."ore:describes"."citation:Dataset Description"."dsDescription:Text"' $WORK_FILE)
+TITLE=$($JQ_TOOL '."ore:describes"."citation:dsDescription"."citation:dsDescriptionValue"' $WORK_FILE 2>/dev/null)
+if [ -z "${TITLE}" ]; then
+   TITLE=$($JQ_TOOL '."ore:describes"."citation:dsDescription"[0]."citation:dsDescriptionValue"' $WORK_FILE 2>/dev/null)
+fi
+DESCRIPTION=$($JQ_TOOL '."ore:describes"."citation:Dataset Description"."dsDescription:Text"' $WORK_FILE 2>/dev/null)
 
 if [ -z "$TITLE" ]; then
    echo "ERROR: title is blank"
