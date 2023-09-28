@@ -34,8 +34,11 @@ ensure_var_defined "$aptrust_api_url" "aptrust_api_url"
 ensure_var_defined "$aptrust_user" "aptrust_user"
 ensure_var_defined "$aptrust_key" "aptrust_key"
 
+# define TMP if not done already
+TMP=${TMP:-/tmp}
+
 # local definitions
-TMPFILE=/tmp/status-all.$$
+TMPFILE=${TMP}/status-all.$$
 
 # track our progress
 SUCCESS_COUNT=0

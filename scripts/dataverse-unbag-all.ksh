@@ -32,9 +32,12 @@ ensure_tool_available $UNBAGGER
 ensure_dir_exists $INPUT_DIR
 ensure_dir_exists $OUTPUT_DIR
 
+# define TMP if not done already
+TMP=${TMP:-/tmp}
+
 # local definitions
-TMPFILE=/tmp/dataverse-unbag-all.$$
-TMPDIR=/tmp/unbag.$$
+TMPFILE=${TMP}/dataverse-unbag-all.$$
+TMPDIR=${TMP}/unbag.$$
 
 # find all the files of a specified pattern
 find $INPUT_DIR -type f -name doi-\*.zip | grep "doi-" > $TMPFILE

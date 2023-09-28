@@ -29,8 +29,11 @@ ensure_file_exists $WAIT_TOOL
 # check the input directory exists
 ensure_dir_exists $INPUT_DIR
 
+# define TMP if not done already
+TMP=${TMP:-/tmp}
+
 # local definitions
-TMPFILE=/tmp/wait-all.$$
+TMPFILE=${TMP}/wait-all.$$
 
 # track our progress
 SUCCESS_COUNT=0

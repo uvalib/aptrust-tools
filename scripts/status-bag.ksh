@@ -42,8 +42,11 @@ if [ -z "$ETAG" ]; then
    exit_on_error 1 "undefined etag for ${BAG_FILE}"
 fi
 
+# define TMP if not done already
+TMP=${TMP:-/tmp}
+
 # local definitions
-TMPFILE=/tmp/status-bag.$$
+TMPFILE=${TMP}/status-bag.$$
 CURL_DEFAULTS="--fail -s -S"
 
 # issue the query

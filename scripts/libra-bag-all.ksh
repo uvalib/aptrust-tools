@@ -43,8 +43,11 @@ ensure_file_exists $BAGGER
 ensure_dir_exists $INPUT_DIR
 ensure_dir_exists $OUTPUT_DIR
 
+# define TMP if not done already
+TMP=${TMP:-/tmp}
+
 # local definitions
-TMPFILE=/tmp/libra-bag-all.$$
+TMPFILE=${TMP}/libra-bag-all.$$
 
 # find all the files of a specified pattern
 find $INPUT_DIR -type d -name export-\* | grep "export-" > $TMPFILE

@@ -32,8 +32,11 @@ ensure_file_exists $BAGGER
 ensure_dir_exists $INPUT_DIR
 ensure_dir_exists $OUTPUT_DIR
 
+# define TMP if not done already
+TMP=${TMP:-/tmp}
+
 # local definitions
-TMPFILE=/tmp/emma-bag-all.$$
+TMPFILE=${TMP}/emma-bag-all.$$
 BAG_TYPE=EMMA
 
 # find all the files of a specified pattern

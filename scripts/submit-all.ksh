@@ -35,8 +35,11 @@ ensure_var_defined "$aws_secret" "aws_secret"
 ensure_var_defined "$aws_region" "aws_region"
 ensure_var_defined "$aws_bucket" "aws_bucket"
 
+# define TMP if not done already
+TMP=${TMP:-/tmp}
+
 # local definitions
-TMPFILE=/tmp/submit-all.$$
+TMPFILE=${TMP}/submit-all.$$
 
 # track our progress
 SUCCESS_COUNT=0
