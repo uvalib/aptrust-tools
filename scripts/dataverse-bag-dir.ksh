@@ -33,21 +33,25 @@ ensure_tool_available $TAR_TOOL
 # check the input directory exists
 ensure_dir_exists $INPUT_DIR
 
+# define TMP if not done already
+TMP=${TMP:-/tmp}
+
 # local definitions
 OUTPUT_FILE=${BAG_NAME}.tar
+BAG_DIR=${TMP}/${BAG_NAME}
 
 # create the directory we will be bagging
-rm -fr $BAG_NAME > /dev/null 2>&1
-mkdir $BAG_NAME > /dev/null 2>&1
-exit_on_error $? "cannot create the working directory $BAG_NAME"
+rm -fr ${BAG_DIR} > /dev/null 2>&1
+mkdir ${BAG_DIR} > /dev/null 2>&1
+exit_on_error $? "cannot create the working directory ${BAG_DIR}"
 
 # copy the source files
-cp -R $INPUT_DIR/* $BAG_NAME
+cp -R $INPUT_DIR/* ${BAG_DIR}
 exit_on_error $? "copying source files"
 
 # create the aptrust-info.txt file
-INFO_FILE=${BAG_NAME}/aptrust-info.txt
-WORK_FILE=${BAG_NAME}/metadata/oai-ore.jsonld
+INFO_FILE=${BAG_DIR}/aptrust-info.txt
+WORK_FILE=${BAG_DIR}/metadata/oai-ore.jsonld
 ensure_file_exists $WORK_FILE
 TITLE=$($JQ_TOOL '."ore:describes"."citation:dsDescription"."citation:dsDescriptionValue"' $WORK_FILE 2>/dev/null)
 if [ -z "${TITLE}" ]; then
@@ -70,18 +74,18 @@ echo "Access: Consortia" >> $INFO_FILE
 echo "Storage: Standard" >> $INFO_FILE
 
 # create an empty manifest if one does not exist
-MANIFEST=${BAG_NAME}/manifest-md5.txt
+MANIFEST=${BAG_DIR}/manifest-md5.txt
 if [ ! -f ${MANIFEST} ]; then
    touch ${MANIFEST}
    exit_on_error $? "creating empty manifest"
 fi
 
 # bundle up the directory
-$TAR_TOOL cvf ${OUTPUT_FILE} $BAG_NAME > /dev/null 2>&1
+$TAR_TOOL cvf ${OUTPUT_FILE} ${BAG_DIR} > /dev/null 2>&1
 exit_on_error $? "during tar"
 
 # cleanup
-rm -fr $BAG_NAME > /dev/null 2>&1
+rm -fr ${BAG_DIR} > /dev/null 2>&1
 
 # its all over
 exit 0
