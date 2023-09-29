@@ -23,6 +23,8 @@ INPUT_DIR=$1
 shift
 BAG_NAME=$1
 shift
+OUTPUT_FILE=$1
+shift
 
 # ensure we have the tools available
 JQ_TOOL=jq
@@ -37,7 +39,6 @@ ensure_dir_exists $INPUT_DIR
 TMP=${TMP:-/tmp}
 
 # local definitions
-OUTPUT_FILE=${BAG_NAME}.tar
 BAG_DIR=${TMP}/${BAG_NAME}
 
 # create the directory we will be bagging
@@ -81,11 +82,12 @@ if [ ! -f ${MANIFEST} ]; then
 fi
 
 # bundle up the directory
-$TAR_TOOL cvf ${OUTPUT_FILE} ${BAG_DIR} > /dev/null 2>&1
+cd ${TMP}
+$TAR_TOOL cvf ${OUTPUT_FILE} ${BAG_NAME} > /dev/null 2>&1
 exit_on_error $? "during tar"
 
 # cleanup
-rm -fr ${BAG_DIR} > /dev/null 2>&1
+rm -fr ${BAG_NAME} > /dev/null 2>&1
 
 # its all over
 exit 0
