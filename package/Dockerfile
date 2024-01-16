@@ -1,13 +1,13 @@
 #
 # build the target application
 #
-FROM public.ecr.aws/docker/library/alpine:3.18
+FROM public.ecr.aws/docker/library/alpine:3.19
 
 # update the packages and add what we need
 RUN apk update && apk upgrade && apk add bash tzdata ca-certificates curl jq tar aws-cli py3-pip zip unzip musl-utils musl-locales && rm -fr /var/cache/apk/*
 
 # install the bagit package
-RUN pip3 install bagit
+RUN pip3 install bagit --break-system-packages
 
 # Create the run user and group
 RUN addgroup --gid 18570 sse && adduser --uid 1984 docker -G sse -D
