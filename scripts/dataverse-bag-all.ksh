@@ -26,6 +26,7 @@ shift
 
 # default values
 BAG_TYPE=DataVerse
+GROUP_ID=LibraData
 
 # bagger tool
 BAGGER=$SCRIPT_DIR/dataverse-bag-dir.ksh
@@ -60,7 +61,7 @@ for i in $(<$TMPFILE); do
    BAG_NAME=${BAG_TYPE}-${ID}
    OUTFILE=${TMP}/${BAG_NAME}.tar
 
-   $BAGGER $INPUT_DIR/$BAG_DIR $BAG_NAME $OUTFILE
+   $BAGGER $INPUT_DIR/$BAG_DIR $BAG_NAME $GROUP_ID $OUTFILE
    if [ $? -eq 0 ]; then
       mv ${OUTFILE} $OUTPUT_DIR
       if [ $? -eq 0 ]; then

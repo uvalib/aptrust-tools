@@ -23,6 +23,8 @@ INPUT_DIR=$1
 shift
 BAG_NAME=$1
 shift
+GROUP_ID=$1
+shift
 OUTPUT_FILE=$1
 shift
 
@@ -51,7 +53,8 @@ cp -R $INPUT_DIR/* ${BAG_DIR}
 exit_on_error $? "copying source files"
 
 # create the aptrust-info.txt file
-INFO_FILE=${BAG_DIR}/aptrust-info.txt
+BAG_INFO_FILE=${BAG_DIR}/bag-info.txt
+APT_INFO_FILE=${BAG_DIR}/aptrust-info.txt
 WORK_FILE=${BAG_DIR}/metadata/oai-ore.jsonld
 ensure_file_exists $WORK_FILE
 TITLE=$($JQ_TOOL '."ore:describes"."citation:dsDescription"."citation:dsDescriptionValue"' $WORK_FILE 2>/dev/null)
@@ -69,10 +72,10 @@ if [ -z "$DESCRIPTION" ]; then
    exit 1
 fi
 
-echo "Title: ${TITLE}" >> $INFO_FILE
-echo "Description: ${DESCRIPTION}" >> $INFO_FILE
-echo "Access: Consortia" >> $INFO_FILE
-echo "Storage: Standard" >> $INFO_FILE
+echo "Title: ${TITLE}" >> $APT_INFO_FILE
+echo "Description: ${DESCRIPTION}" >> $APT_INFO_FILE
+echo "Access: Consortia" >> $APT_INFO_FILE
+echo "Storage: Standard" >> $APT_INFO_FILE
 
 # create an empty manifest if one does not exist
 MANIFEST=${BAG_DIR}/manifest-md5.txt
@@ -80,6 +83,9 @@ if [ ! -f ${MANIFEST} ]; then
    touch ${MANIFEST}
    exit_on_error $? "creating empty manifest"
 fi
+
+# special case for Dataverse bags, add the group identifier
+echo "Bag-Group-Identifier: ${GROUP_ID}" >> $BAG_INFO_FILE
 
 # bundle up the directory
 cd ${TMP}
