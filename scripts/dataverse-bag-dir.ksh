@@ -57,10 +57,7 @@ BAG_INFO_FILE=${BAG_DIR}/bag-info.txt
 APT_INFO_FILE=${BAG_DIR}/aptrust-info.txt
 WORK_FILE=${BAG_DIR}/metadata/oai-ore.jsonld
 ensure_file_exists $WORK_FILE
-TITLE=$($JQ_TOOL '."ore:describes"."citation:dsDescription"."citation:dsDescriptionValue"' $WORK_FILE 2>/dev/null)
-if [ -z "${TITLE}" ]; then
-   TITLE=$($JQ_TOOL '."ore:describes"."citation:dsDescription"[0]."citation:dsDescriptionValue"' $WORK_FILE 2>/dev/null)
-fi
+TITLE=$($JQ_TOOL '."ore:describes"."Title"' $WORK_FILE 2>/dev/null)
 DESCRIPTION=$($JQ_TOOL '."ore:describes"."citation:Dataset Description"."dsDescription:Text"' $WORK_FILE 2>/dev/null)
 
 if [ -z "$TITLE" ]; then
