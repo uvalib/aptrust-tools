@@ -77,11 +77,15 @@ echo "Description: ${DESCRIPTION}" >> $APT_INFO_FILE
 echo "Access: Consortia" >> $APT_INFO_FILE
 echo "Storage: Standard" >> $APT_INFO_FILE
 
+# various possible manifests
+MANIFEST_MD5=${BAG_DIR}/manifest-md5.txt
+MANIFEST_SHA1=${BAG_DIR}/manifest-sha1.txt
+
 # create an empty manifest if one does not exist
-MANIFEST=${BAG_DIR}/manifest-md5.txt
-if [ ! -f ${MANIFEST} ]; then
-   touch ${MANIFEST}
-   exit_on_error $? "creating empty manifest"
+if [ ! -f ${MANIFEST_MD5} -a ! -f ${MANIFEST_SHA1} ]; then
+   #echo "WARNING: no manifest, creating ${MANIFEST_MD5}..."
+   touch ${MANIFEST_MD5}
+   exit_on_error $? "creating empty md5 manifest"
 fi
 
 # special case for Dataverse bags, add the group identifier
