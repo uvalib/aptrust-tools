@@ -30,9 +30,11 @@ shift
 
 # ensure we have the tools available
 JQ_TOOL=jq
-ensure_tool_available $JQ_TOOL
+ensure_tool_available ${JQ_TOOL}
 TAR_TOOL=tar
-ensure_tool_available $TAR_TOOL
+ensure_tool_available ${TAR_TOOL}
+MD5_TOOL=md5sum
+ensure_tool_available ${MD5_TOOL}
 
 # check the input directory exists
 ensure_dir_exists $INPUT_DIR
@@ -57,10 +59,10 @@ BAG_INFO_FILE=${BAG_DIR}/bag-info.txt
 APT_INFO_FILE=${BAG_DIR}/aptrust-info.txt
 WORK_FILE=${BAG_DIR}/metadata/oai-ore.jsonld
 ensure_file_exists $WORK_FILE
-TITLE=$($JQ_TOOL '."ore:describes"."title" // empty' $WORK_FILE 2>/dev/null)
-DESCRIPTION=$($JQ_TOOL '."ore:describes"."citation:dsDescription"."citation:dsDescriptionValue" // empty' $WORK_FILE 2>/dev/null)
+TITLE=$(${JQ_TOOL} '."ore:describes"."title" // empty' $WORK_FILE 2>/dev/null)
+DESCRIPTION=$(${JQ_TOOL} '."ore:describes"."citation:dsDescription"."citation:dsDescriptionValue" // empty' $WORK_FILE 2>/dev/null)
 if [ -z "$DESCRIPTION" ]; then
-   DESCRIPTION=$($JQ_TOOL '."ore:describes"."citation:dsDescription".[0]."citation:dsDescriptionValue" // empty' $WORK_FILE 2>/dev/null)
+   DESCRIPTION=$(${JQ_TOOL} '."ore:describes"."citation:dsDescription".[0]."citation:dsDescriptionValue" // empty' $WORK_FILE 2>/dev/null)
 fi
 
 if [ -z "$TITLE" ]; then
@@ -78,14 +80,25 @@ echo "Access: Consortia" >> $APT_INFO_FILE
 echo "Storage: Standard" >> $APT_INFO_FILE
 
 # various possible manifests
-MANIFEST_MD5=${BAG_DIR}/manifest-md5.txt
+MANIFEST_MD5_FILENAME=manifest-md5.txt
+MANIFEST_MD5=${BAG_DIR}/${MANIFEST_MD5_FILENAME}
 MANIFEST_SHA1=${BAG_DIR}/manifest-sha1.txt
 
 # create an empty manifest if one does not exist
-if [ ! -f ${MANIFEST_MD5} -a ! -f ${MANIFEST_SHA1} ]; then
-   #echo "WARNING: no manifest, creating ${MANIFEST_MD5}..."
-   touch ${MANIFEST_MD5}
-   exit_on_error $? "creating empty md5 manifest"
+if [ ! -f ${MANIFEST_MD5} ]; then
+   if [ -f ${MANIFEST_SHA1} ]; then
+      TMPFILE=${TMP}/manifest.$$
+      echo -n "creating ${MANIFEST_MD5_FILENAME} "
+      cat ${MANIFEST_SHA1} | cut -c 42- > ${TMPFILE}
+      while read -r line; do
+         sum=$(${MD5_TOOL} "${BAG_DIR}/${line}" | awk '{print $1}')
+         echo "${sum} ${line}" >> ${MANIFEST_MD5}
+      done < ${TMPFILE}
+   else
+      echo -n "creating empty ${MANIFEST_MD5_FILENAME} "
+      touch ${MANIFEST_MD5}
+      exit_on_error $? "creating empty ${MANIFEST_MD5_FILENAME}"
+   fi
 fi
 
 # special case for Dataverse bags, add the group identifier
@@ -93,7 +106,7 @@ echo "Bag-Group-Identifier: ${GROUP_ID}" >> $BAG_INFO_FILE
 
 # bundle up the directory
 cd ${TMP}
-$TAR_TOOL cvf ${OUTPUT_FILE} ${BAG_NAME} > /dev/null 2>&1
+${TAR_TOOL} cvf ${OUTPUT_FILE} ${BAG_NAME} > /dev/null 2>&1
 exit_on_error $? "during tar"
 
 # cleanup
