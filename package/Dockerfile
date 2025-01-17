@@ -1,7 +1,7 @@
 #
 # build the target application
 #
-FROM public.ecr.aws/docker/library/alpine:3.20
+FROM public.ecr.aws/docker/library/alpine:3.21
 
 # update the packages and add what we need
 RUN apk update && apk upgrade && apk add bash tzdata ca-certificates curl jq tar aws-cli py3-pip zip unzip musl-utils musl-locales && rm -fr /var/cache/apk/*
@@ -17,7 +17,7 @@ ENV TZ=UTC
 RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Specify home 
-ENV APP_HOME /aptrust-tools
+ENV APP_HOME=/aptrust-tools
 WORKDIR $APP_HOME
 
 # Create necessary directories
