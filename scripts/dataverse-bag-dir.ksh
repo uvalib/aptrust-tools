@@ -91,7 +91,14 @@ if [ ! -f ${MANIFEST_MD5} ]; then
       echo -n "creating ${MANIFEST_MD5_FILENAME} "
       cat ${MANIFEST_SHA1} | cut -c 42- > ${TMPFILE}
       while read -r line; do
+         # cos embedded windoze CR characters
+         line=$(echo ${line} | tr -d '\r')
          sum=$(${MD5_TOOL} "${BAG_DIR}/${line}" | awk '{print $1}')
+         # seen an error here
+         if [ -z "${sum}" ]; then
+            exit_on_error 1 "creating md5 for ${line}"
+         fi
+
          echo "${sum} ${line}" >> ${MANIFEST_MD5}
       done < ${TMPFILE}
    else
