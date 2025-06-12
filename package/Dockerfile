@@ -1,7 +1,7 @@
 #
 # build the target application
 #
-FROM public.ecr.aws/docker/library/alpine:3.21
+FROM public.ecr.aws/docker/library/alpine:3.22
 
 # update the packages and add what we need
 RUN apk update && apk upgrade && apk add bash tzdata ca-certificates curl jq tar aws-cli py3-pip zip unzip musl-utils musl-locales && rm -fr /var/cache/apk/*
